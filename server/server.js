@@ -1,5 +1,6 @@
 var express = require("express");
 var bodyParser = require("body-parser");
+var _ = require("underscore");
 
 module.exports = function(port, middleware, callback) {
     var app = express();
@@ -28,24 +29,36 @@ module.exports = function(port, middleware, callback) {
         res.json(todos);
     });
 
+    // Update
+    app.put("/api/todo", function(req, res) {
+        var todo = req.body;
+        todos = removeTodo(todo.id);
+        todos.push(todo);
+        res.sendStatus(200);
+    });
+
     // Delete
     app.delete("/api/todo/:id", function(req, res) {
         var id = req.params.id;
         var todo = getTodo(id);
         if (todo) {
-            todos = todos.filter(function(otherTodo) {
-                return otherTodo !== todo;
-            });
+            todos = removeTodo(todo.id);
             res.sendStatus(200);
         } else {
             res.sendStatus(404);
         }
     });
 
+    function removeTodo(id) {
+        return _.filter(todos, function(eachTodo) {
+            return eachTodo.id !== id;
+        });
+    }
+
     function getTodo(id) {
-        return todos.filter(function(todo) {
+        return _.find(todos, function(todo) {
             return todo.id === id;
-        })[0];
+        });
     }
 
     var server = app.listen(port, callback);

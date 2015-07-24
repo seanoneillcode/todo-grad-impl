@@ -23,3 +23,17 @@ h1 {
     line-height: 34px;
     color: rgba(255, 255, 255, 1);
 }
+button {
+    background-color: #5C5C5C;
+    cursor: pointer;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    margin-right: 1em;
+}
+.item-label {
+    
+}
+li {
+    display: flex;
+}

@@ -100,7 +100,7 @@ describe("server", function() {
             });
         });
         it("removes the item from the list of todos", function(done) {
-            request.put({
+            request.post({
                 url: todoListUrl,
                 json: {
                     title: "This is a TODO item",
@@ -110,6 +110,34 @@ describe("server", function() {
                 request.del(todoListUrl + "/0", function() {
                     request.get(todoListUrl, function(error, response, body) {
                         assert.deepEqual(JSON.parse(body), []);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    describe("update a todo", function() {
+        it("updates the todo at the end of the list of todos", function(done) {
+            request.post({
+                url: todoListUrl,
+                json: {
+                    title: "This is a TODO item",
+                    done: false
+                }
+            }, function() {
+                request.put({
+                    url: todoListUrl,
+                    json: {
+                        title: "This is an updated TODO item",
+                        done: false
+                    }
+                }, function(error, response, body) {
+                    request.get(todoListUrl, function(error, response, body) {
+                        assert.deepEqual(JSON.parse(body), [{
+                            title: "This is an updated TODO item",
+                            done: false,
+                            id: "0"
+                        }]);
                         done();
                     });
                 });
