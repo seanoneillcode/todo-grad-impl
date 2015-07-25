@@ -19,6 +19,7 @@ module.exports = function(port, middleware, callback) {
         var todo = req.body;
         todo.id = latestId.toString();
         latestId++;
+        todo.isComplete = false;
         todos.push(todo);
         res.set("Location", "/api/todo/" + todo.id);
         res.sendStatus(201);
@@ -32,9 +33,14 @@ module.exports = function(port, middleware, callback) {
     // Update
     app.put("/api/todo", function(req, res) {
         var todo = req.body;
-        todos = removeTodo(todo.id);
-        todos.push(todo);
-        res.sendStatus(200);
+        var existingTodo = getTodo(todo.id);
+        if (!existingTodo) {
+            res.sendStatus(404);
+        } else {
+            todos = removeTodo(todo.id);
+            todos.push(todo);
+            res.sendStatus(200);
+        }
     });
 
     // Delete

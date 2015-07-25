@@ -37,6 +37,9 @@ button {
     color: #fff;
     padding: 0.2em;
 }
+.item-label.item-complete {
+    background-color: #000000;
+}
 li {
     display: flex;
     margin: 0.2em;
