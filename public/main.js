@@ -50,32 +50,40 @@ function reloadTodoList() {
     getTodoList(function(todos) {
         todoListPlaceholder.style.display = "none";
         todos.forEach(function(todo) {
-            var listItem = document.createElement("li");
-            var itemLabel = document.createElement("div");
-            itemLabel.textContent = todo.title;
-            itemLabel.className = "item-label";
-            var deleteButton = document.createElement("button");
-            deleteButton.textContent = "delete";
-            deleteButton.onclick = function() {
-                deleteTodo(todo);
-            };
-            var updateButton = document.createElement("button");
-            updateButton.textContent = "update";
-            updateButton.onclick = function() {
-                updateTodo(todo);
-            };
-            listItem.appendChild(deleteButton);
-            listItem.appendChild(updateButton);
-            listItem.appendChild(itemLabel);
-            todoList.appendChild(listItem);
+            todoList.appendChild(createTodoElement(todo));
         });
     });
+}
+
+function createTodoElement(todo) {
+    // <input class="editable" type="text" name="type" style="display:none"/>
+    var listItem = document.createElement("li");
+    var itemLabel = document.createElement("input");
+    itemLabel.type = "text";
+    itemLabel.style = "display:none";
+    itemLabel.value = todo.title;
+    itemLabel.className = "item-label";
+    itemLabel.onkeydown = function(event) {
+        if (event.keyCode === 13) {
+            todo.title = itemLabel.value;
+            updateTodo(todo);
+        }
+    };
+    var deleteButton = document.createElement("button");
+    deleteButton.textContent = "delete";
+    deleteButton.onclick = function() {
+        deleteTodo(todo);
+    };
+    listItem.appendChild(deleteButton);
+    listItem.appendChild(itemLabel);
+    return listItem;
 }
 
 function updateTodo(todo) {
     var createRequest = new XMLHttpRequest();
     createRequest.open("PUT", "/api/todo");
     createRequest.setRequestHeader("Content-type", "application/json");
+    console.log(todo);
     createRequest.send(JSON.stringify({
         id: todo.id,
         title: todo.title

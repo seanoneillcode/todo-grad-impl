@@ -129,7 +129,8 @@ describe("server", function() {
                     url: todoListUrl,
                     json: {
                         title: "This is an updated TODO item",
-                        done: false
+                        done: false,
+                        id: "0"
                     }
                 }, function(error, response, body) {
                     request.get(todoListUrl, function(error, response, body) {

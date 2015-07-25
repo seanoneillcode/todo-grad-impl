@@ -32,8 +32,12 @@ button {
     margin-right: 1em;
 }
 .item-label {
-    
+    border: none;
+    background-color: #18416B;
+    color: #fff;
+    padding: 0.2em;
 }
 li {
     display: flex;
+    margin: 0.2em;
 }
