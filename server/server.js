@@ -39,6 +39,7 @@ module.exports = function(port, middleware, callback) {
         } else {
             todos = removeTodo(todo.id);
             todos.push(todo);
+            todos = _.sortBy(todos, "id");
             res.sendStatus(200);
         }
     });
