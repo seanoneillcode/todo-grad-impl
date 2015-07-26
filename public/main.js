@@ -6,6 +6,7 @@ var error = document.getElementById("error");
 var count = document.getElementById("count-label");
 var deleteCompletedButton = document.getElementById("delete-completed");
 var todos = [];
+var markedForDelete = [];
 
 form.onsubmit = function(event) {
     var title = todoTitle.value;
@@ -46,45 +47,44 @@ function getTodoList(callback) {
 }
 
 function deleteCompleted() {
-    var completedTodos = [];
-    todos.forEach(function (todo) {
-        if (todo.isComplete) {
-            completedTodos.push(todo);
-        }
-    });
-    var doneSoFar = completedTodos.length;
-    function allDone() {
-        doneSoFar = doneSoFar - 1;
-        if (doneSoFar === 0) {
-            reloadTodoList();
-        }
+    if (markedForDelete.length === 0) {
+        reloadTodoList();
+    } else {
+        deleteTodo(markedForDelete.pop(), deleteCompleted);
     }
-    completedTodos.forEach(function (todo) {
-        deleteTodo(todo, allDone);
+}
+
+deleteCompletedButton.onclick = function() {
+    markedForDelete = _.filter(todos, function(t) {
+            return t.isComplete;
     });
+    deleteCompleted(markedForDelete);
+};
+
+function refreshTodoElements() {
+    while (todoList.firstChild) {
+        todoList.removeChild(todoList.firstChild);
+    }
+    todoListPlaceholder.style.display = "none";
+    var uncompleteCount = 0;
+    todos.forEach(function(todo) {
+        todoList.appendChild(createTodoElement(todo));
+        if (!todo.isComplete) {
+            uncompleteCount++;
+        }
+    });
+    count.textContent = "Items left to complete : " + uncompleteCount;
+    deleteCompletedButton.className = uncompleteCount === todos.length ? "hidden" : "";
 }
 
 function reloadTodoList() {
     var self = this;
-    while (todoList.firstChild) {
-        todoList.removeChild(todoList.firstChild);
-    }
     todoListPlaceholder.style.display = "block";
     getTodoList(function(todos) {
+        console.log("got back " + todos.length + " todos");
         self.todos = todos;
-        todoListPlaceholder.style.display = "none";
-        var uncompleteCount = 0;
-        todos.forEach(function(todo) {
-            todoList.appendChild(createTodoElement(todo));
-            if (!todo.isComplete) {
-                uncompleteCount++;
-            }
-        });
-        count.textContent = "Items left to complete : " + uncompleteCount;
+        refreshTodoElements();
     });
-    deleteCompletedButton.onclick = function() {
-        deleteCompleted();
-    };
 }
 
 function createTodoElement(todo) {
@@ -99,6 +99,10 @@ function createTodoElement(todo) {
             todo.title = itemLabel.value;
             updateTodo(todo, reloadTodoList);
         }
+    };
+    itemLabel.onblur = function(event) {
+        todo.title = itemLabel.value;
+        updateTodo(todo, reloadTodoList);
     };
     var deleteButton = document.createElement("button");
     deleteButton.textContent = "delete";
@@ -133,6 +137,7 @@ function updateTodo(todo, success) {
 }
 
 function deleteTodo(todo, success) {
+    console.log(todo);
     var createRequest = new XMLHttpRequest();
     createRequest.open("DELETE", "/api/todo/" + todo.id);
     createRequest.onload = function() {

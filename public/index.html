@@ -5,13 +5,13 @@
         <title>TODO List</title>
         <link href="main.css" rel="stylesheet" type="text/css">
         <link rel="icon" type="image/ico" href="favicon.ico">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     </head>
     <body>
         <header>
             <h1>TODO List</h1>
         </header>
         <div id="count-label"></div>
-        <button id="delete-completed">delete completed</button>
         <section>
             <h2 id="todo-list-placeholder">Loading...</h2>
             <ul id="todo-list"></ul>
@@ -19,6 +19,7 @@
                 <input id="new-todo" placeholder="What needs to be done?" autofocus>
                 <input id="submit-todo" type="submit" value="Create">
             </form>
+            <button id="delete-completed">delete completed</button>
             <div id="error"></div>
         </section>
         <script type="text/javascript" src="main.js"></script>
